@@ -4,13 +4,11 @@ package firebasestorage
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"golang.org/x/oauth2/google"
@@ -20,57 +18,59 @@ import (
 )
 
 func main() {
-	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
-	if projectID == "" {
-		fmt.Fprintf(os.Stderr, "GOOGLE_CLOUD_PROJECT environment variable must be set.\n")
-		os.Exit(1)
-	}
-	var o string
-	flag.StringVar(&o, "o", "", "source object; in the format of <bucket:object>")
-	flag.Parse()
-
-	names := strings.Split(o, ":")
-	if len(names) < 2 {
-		usage("missing -o flag")
-	}
-	bucket, object := names[0], names[1]
-
-	if len(os.Args) < 3 {
-		usage("missing subcommand")
-	}
-
-	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	switch os.Args[2] {
-	case "write":
-		if err := WriteFile(client, bucket, object, "notes.txt"); err != nil {
-			log.Fatalf("Cannot write object: %v", err)
+	/*
+		projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
+		if projectID == "" {
+			fmt.Fprintf(os.Stderr, "GOOGLE_CLOUD_PROJECT environment variable must be set.\n")
+			os.Exit(1)
 		}
-	case "read":
-		data, err := Read(client, bucket, object)
+		var o string
+		flag.StringVar(&o, "o", "", "source object; in the format of <bucket:object>")
+		flag.Parse()
+
+		names := strings.Split(o, ":")
+		if len(names) < 2 {
+			usage("missing -o flag")
+		}
+		bucket, object := names[0], names[1]
+
+		if len(os.Args) < 3 {
+			usage("missing subcommand")
+		}
+
+		ctx := context.Background()
+		client, err := storage.NewClient(ctx)
 		if err != nil {
-			log.Fatalf("Cannot read object: %v", err)
+			log.Fatal(err)
 		}
-		fmt.Printf("Object contents: %s\n", data)
-	case "metadata":
-		attrs, err := Attrs(client, bucket, object)
-		if err != nil {
-			log.Fatalf("Cannot get object metadata: %v", err)
+
+		switch os.Args[2] {
+		case "write":
+			if err := WriteFile(client, bucket, object, "notes.txt"); err != nil {
+				log.Fatalf("Cannot write object: %v", err)
+			}
+		case "read":
+			data, err := Read(client, bucket, object)
+			if err != nil {
+				log.Fatalf("Cannot read object: %v", err)
+			}
+			fmt.Printf("Object contents: %s\n", data)
+		case "metadata":
+			attrs, err := Attrs(client, bucket, object)
+			if err != nil {
+				log.Fatalf("Cannot get object metadata: %v", err)
+			}
+			fmt.Printf("Object metadata: %v\n", attrs)
+		case "makepublic":
+			if err := MakePublic(client, bucket, object); err != nil {
+				log.Fatalf("Cannot to make object public: %v", err)
+			}
+		case "delete":
+			if err := Delete(client, bucket, object); err != nil {
+				log.Fatalf("Cannot to delete object: %v", err)
+			}
 		}
-		fmt.Printf("Object metadata: %v\n", attrs)
-	case "makepublic":
-		if err := MakePublic(client, bucket, object); err != nil {
-			log.Fatalf("Cannot to make object public: %v", err)
-		}
-	case "delete":
-		if err := Delete(client, bucket, object); err != nil {
-			log.Fatalf("Cannot to delete object: %v", err)
-		}
-	}
+	*/
 }
 
 //WriteFile upload the file to firebase storage
@@ -183,13 +183,13 @@ func ListByPrefix(w io.Writer, client *storage.Client, bucket, prefix, delim str
 }
 
 //Read ...
-func Read(client *storage.Client, bucket, object string) ([]byte, error) {
+func Read(client *storage.Client, bucket *storage.BucketHandle, object string) ([]byte, error) {
 	// [START download_file]
 	ctx := context.Background()
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
-	rc, err := client.Bucket(bucket).Object(object).NewReader(ctx)
+	rc, err := bucket.Object(object).NewReader(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +201,21 @@ func Read(client *storage.Client, bucket, object string) ([]byte, error) {
 	}
 	return data, nil
 	// [END download_file]
+}
+
+//ReadIo return io.Reader instead bytes
+func ReadIo(client *storage.Client, bucket *storage.BucketHandle, object string) (io.Reader, error) {
+	// [START download_file]
+	ctx := context.Background()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+	rc, err := bucket.Object(object).NewReader(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rc.Close()
+	return rc, nil
 }
 
 //Attrs ...

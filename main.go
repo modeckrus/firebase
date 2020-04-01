@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
+	"socialapp/firebasestorage"
 
 	"cloud.google.com/go/firestore"
+	cstorage "cloud.google.com/go/storage"
 	gstorage "cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
 	Auth "firebase.google.com/go/auth"
@@ -18,8 +21,9 @@ import (
 var client *db.Client
 var fstore *firestore.Client
 var storage *firestorage.Client
-var buckit *gstorage.BucketHandle
+var bucket *gstorage.BucketHandle
 var auth *Auth.Client
+var cstor *cstorage.Client
 
 func init() {
 	ctx := context.Background()
@@ -45,17 +49,33 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func main() {
-	srcimg, err := imaging.Open("./1.jpg")
+	cstor, err = cstorage.NewClient(ctx, opt)
 	if err != nil {
 		log.Fatal(err)
 	}
-	img := imaging.Thumbnail(srcimg, 300, 300, imaging.Lanczos)
-	err = imaging.Save(img, fmt.Sprintf("@thubnail_%v", "1.jpg"))
+	bucket = cstor.Bucket("gvisionmodeck.appspot.com")
+}
+
+func main() {
+	b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
+	io := bytes.NewReader(b)
+	src, err := imaging.Decode(io)
+	err = imaging.Save(src, "images/david.jpg")
 	if err != nil {
 		log.Fatal(err)
+	}
+	var sizes = []int{
+		100,
+		200,
+		300,
+		500,
+	}
+	for i, size := range sizes {
+		img := imaging.Thumbnail(src, size, size, imaging.Lanczos)
+		err = imaging.Save(img, fmt.Sprintf("images/@thubnail_david_%v.jpg", i))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 }
