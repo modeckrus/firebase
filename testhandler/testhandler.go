@@ -1,4 +1,4 @@
-package thubnails
+package testhandler
 
 import (
 	"bytes"
@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"socialapp/firebasestorage"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/modeckrus/firebase/firebasestorage"
 
 	"cloud.google.com/go/firestore"
 	cstorage "cloud.google.com/go/storage"
@@ -142,20 +142,6 @@ func convertToThubStrcut(hand ThubHandStruct) (Thubnail, error) {
 		})
 	}
 	return thub, nil
-}
-
-func ThumbHandler(ctx context.Context, e FirestoreEvent) error {
-	fullPath := strings.Split(e.Value.Name, "/documents/")[1]
-	pathParts := strings.Split(fullPath, "/")
-	log.Println(pathParts)
-	log.Printf("event fields: %v", e.Value.Fields)
-	thub, err := convertToThubStrcut(e.Value.Fields)
-	if err != nil {
-		log.Fatal(err)
-		return err
-	}
-	log.Printf("Thub is: %v", thub)
-	return nil
 }
 
 //Thubnails make thunail of images in firebase storage

@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"log"
-	"socialapp/firebasestorage"
+	"socialapp/testhandler"
 
 	"cloud.google.com/go/firestore"
 	cstorage "cloud.google.com/go/storage"
@@ -14,7 +13,6 @@ import (
 	Auth "firebase.google.com/go/auth"
 	"firebase.google.com/go/db"
 	firestorage "firebase.google.com/go/storage"
-	"github.com/disintegration/imaging"
 	"google.golang.org/api/option"
 )
 
@@ -56,26 +54,57 @@ func init() {
 	bucket = cstor.Bucket("gvisionmodeck.appspot.com")
 }
 
+type ThubHand struct {
+	Path  string `json:"path"`
+	Sizes []struct {
+		Height string `json:"height"`
+		Width  int    `json:"width"`
+	} `json:"sizes"`
+}
+
 func main() {
-	b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
-	io := bytes.NewReader(b)
-	src, err := imaging.Decode(io)
-	err = imaging.Save(src, "images/david.jpg")
+	ctx := context.Background()
+	doc := fstore.Collection("service").Doc("service").Collection("thubnail").Doc("x9f09yczE0fGiNyehsul")
+	snap, err := doc.Get(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var sizes = []int{
-		100,
-		200,
-		300,
-		500,
+	var thub ThubHand
+	err = snap.DataTo(&thub)
+	if err != nil {
+		log.Fatal(err)
 	}
-	for i, size := range sizes {
-		img := imaging.Thumbnail(src, size, size, imaging.Lanczos)
-		err = imaging.Save(img, fmt.Sprintf("images/@thubnail_david_%v.jpg", i))
+	fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
+	fmt.Println(thub)
+	/*
+		b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
+		io := bytes.NewReader(b)
+		src, err := imaging.Decode(io)
+		err = imaging.Save(src, "images/david.jpg")
 		if err != nil {
 			log.Fatal(err)
 		}
-	}
 
+		var sizes []thubnails.Size
+		sizes = []thubnails.Size{
+			thubnails.Size{
+				Width:  100,
+				Height: 100,
+			},
+			thubnails.Size{
+				Width:  200,
+				Height: 200,
+			},
+			thubnails.Size{
+				Width:  300,
+				Height: 300,
+			},
+			thubnails.Size{
+				Width:  500,
+				Height: 500,
+			},
+		}
+		thubnails.Thubnails(cstor, bucket, "david.jpg", sizes)
+	*/
+	testhandler.Thubnails()
 }

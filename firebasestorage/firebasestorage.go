@@ -74,7 +74,7 @@ func main() {
 }
 
 //WriteFile upload the file to firebase storage
-func WriteFile(client *storage.Client, bucket, object, filepath string) error {
+func WriteFile(client *storage.Client, bucket *storage.BucketHandle, object, filepath string) error {
 	f, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -85,13 +85,13 @@ func WriteFile(client *storage.Client, bucket, object, filepath string) error {
 }
 
 //Write upload file using io.Reader, u can put a file here
-func Write(client *storage.Client, bucket, object string, f io.Reader) error {
+func Write(client *storage.Client, bucket *storage.BucketHandle, object string, f io.Reader) error {
 	// [START upload_file]
 	ctx := context.Background()
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
-	wc := client.Bucket(bucket).Object(object).NewWriter(ctx)
+	wc := bucket.Object(object).NewWriter(ctx)
 	var err error
 	if _, err = io.Copy(wc, f); err != nil {
 		return err
