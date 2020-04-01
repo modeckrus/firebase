@@ -28,7 +28,7 @@ func init() {
 		DatabaseURL:   "https://gvisionmodeck.firebaseio.com/",
 		StorageBucket: "gvisionmodeck.appspot.com",
 	}
-	opt := option.WithCredentialsFile("./adminsdk.json")
+	opt := option.WithCredentialsFile("./secured/adminsdk.json") //Specify this file by ur adminsdk, u can find it in settigns of ur firebase project
 	app, err := firebase.NewApp(ctx, conf, opt)
 	if err != nil {
 		log.Fatal(err)
