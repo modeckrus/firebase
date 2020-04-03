@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"log"
-	"socialapp/testhandler"
 
 	"cloud.google.com/go/firestore"
 	cstorage "cloud.google.com/go/storage"
@@ -13,6 +12,8 @@ import (
 	Auth "firebase.google.com/go/auth"
 	"firebase.google.com/go/db"
 	firestorage "firebase.google.com/go/storage"
+	"github.com/modeckrus/firebase/postedition"
+	"github.com/modeckrus/firebase/usermodel"
 	"google.golang.org/api/option"
 )
 
@@ -63,20 +64,20 @@ type ThubHand struct {
 }
 
 func main() {
-	ctx := context.Background()
-	doc := fstore.Collection("service").Doc("service").Collection("thubnail").Doc("x9f09yczE0fGiNyehsul")
-	snap, err := doc.Get(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var thub ThubHand
-	err = snap.DataTo(&thub)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
-	fmt.Println(thub)
 	/*
+		ctx := context.Background()
+		doc := fstore.Collection("service").Doc("service").Collection("thubnail").Doc("x9f09yczE0fGiNyehsul")
+		snap, err := doc.Get(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+		var thub ThubHand
+		err = snap.DataTo(&thub)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
+		fmt.Println(thub)
 		b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
 		io := bytes.NewReader(b)
 		src, err := imaging.Decode(io)
@@ -84,7 +85,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
+	*/
+	/*
 		var sizes []thubnails.Size
 		sizes = []thubnails.Size{
 			thubnails.Size{
@@ -104,7 +106,38 @@ func main() {
 				Height: 500,
 			},
 		}
-		thubnails.Thubnails(cstor, bucket, "david.jpg", sizes)
+		thub := thubnails.Thubnail{
+			Path:  "avatars/testavatar/download.jpeg",
+			Sizes: sizes,
+			Ready: false,
+		}
+		js, err := json.Marshal(thub)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(js))
+		ctx := context.Background()
+		fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
 	*/
-	testhandler.Thubnails()
+
+	postE := postedition.PostEdition{
+		Title:     "TestTitle",
+		Body:      "TestBody",
+		Hasattach: true,
+		Images: []string{
+			"testImagePath",
+		},
+	}
+	user := usermodel.User{
+		UID:     "TestUId",
+		Surname: "Surname",
+		Email:   "Email@mail.test",
+	}
+	postpub := postedition.CretePostPubfromPostEdition(postE, user)
+	js, err := json.Marshal(postpub)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(string(js))
 }

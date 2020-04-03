@@ -1,0 +1,2 @@
+ 
+export GOOGLE_APPLICATION_CREDENTIALS="/home/modeck/go/src/github.com/modeckrus/firebase/secured/adminsdk.json"
