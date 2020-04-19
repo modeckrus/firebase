@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	"cloud.google.com/go/firestore"
@@ -12,8 +11,6 @@ import (
 	Auth "firebase.google.com/go/auth"
 	"firebase.google.com/go/db"
 	firestorage "firebase.google.com/go/storage"
-	"github.com/modeckrus/firebase/postedition"
-	"github.com/modeckrus/firebase/usermodel"
 	"google.golang.org/api/option"
 )
 
@@ -120,24 +117,4 @@ func main() {
 		fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
 	*/
 
-	postE := postedition.PostEdition{
-		Title:     "TestTitle",
-		Body:      "TestBody",
-		Hasattach: true,
-		Images: []string{
-			"testImagePath",
-		},
-	}
-	user := usermodel.User{
-		UID:     "TestUId",
-		Surname: "Surname",
-		Email:   "Email@mail.test",
-	}
-	postpub := postedition.CretePostPubfromPostEdition(postE, user)
-	js, err := json.Marshal(postpub)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(string(js))
 }

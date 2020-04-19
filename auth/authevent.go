@@ -90,9 +90,12 @@ func AuthEventFunc(ctx context.Context, e AuthEvent) error {
 
 	nick := strings.Split(e.Email, "@")[0]
 	fstore.Collection("user").Doc(e.UID).Set(ctx, usermodel.User{
-		UID:   e.UID,
-		Email: e.Email,
-		Nick:  nick,
+		UID:      e.UID,
+		Email:    e.Email,
+		Nick:     nick,
+		Name:     nick,
+		Surname:  nick,
+		IsSetted: false,
 	})
 	fstore.Collection("user").Doc(e.UID).Collection("subscribers").Doc(e.UID).Set(ctx, usermodel.SubModel{
 		UID:    e.UID,
