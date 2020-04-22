@@ -61,60 +61,61 @@ type ThubHand struct {
 }
 
 func main() {
-	/*
-		ctx := context.Background()
-		doc := fstore.Collection("service").Doc("service").Collection("thubnail").Doc("x9f09yczE0fGiNyehsul")
-		snap, err := doc.Get(ctx)
-		if err != nil {
-			log.Fatal(err)
-		}
-		var thub ThubHand
-		err = snap.DataTo(&thub)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
-		fmt.Println(thub)
-		b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
-		io := bytes.NewReader(b)
-		src, err := imaging.Decode(io)
-		err = imaging.Save(src, "images/david.jpg")
-		if err != nil {
-			log.Fatal(err)
-		}
-	*/
-	/*
-		var sizes []thubnails.Size
-		sizes = []thubnails.Size{
-			thubnails.Size{
-				Width:  100,
-				Height: 100,
-			},
-			thubnails.Size{
-				Width:  200,
-				Height: 200,
-			},
-			thubnails.Size{
-				Width:  300,
-				Height: 300,
-			},
-			thubnails.Size{
-				Width:  500,
-				Height: 500,
-			},
-		}
-		thub := thubnails.Thubnail{
-			Path:  "avatars/testavatar/download.jpeg",
-			Sizes: sizes,
-			Ready: false,
-		}
-		js, err := json.Marshal(thub)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(string(js))
-		ctx := context.Background()
-		fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
-	*/
 
 }
+
+/*
+	ctx := context.Background()
+	doc := fstore.Collection("service").Doc("service").Collection("thubnail").Doc("x9f09yczE0fGiNyehsul")
+	snap, err := doc.Get(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var thub ThubHand
+	err = snap.DataTo(&thub)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
+	fmt.Println(thub)
+	b, err := firebasestorage.Read(cstor, bucket, "david.jpg")
+	io := bytes.NewReader(b)
+	src, err := imaging.Decode(io)
+	err = imaging.Save(src, "images/david.jpg")
+	if err != nil {
+		log.Fatal(err)
+	}
+*/
+/*
+	var sizes []thubnails.Size
+	sizes = []thubnails.Size{
+		thubnails.Size{
+			Width:  100,
+			Height: 100,
+		},
+		thubnails.Size{
+			Width:  200,
+			Height: 200,
+		},
+		thubnails.Size{
+			Width:  300,
+			Height: 300,
+		},
+		thubnails.Size{
+			Width:  500,
+			Height: 500,
+		},
+	}
+	thub := thubnails.Thubnail{
+		Path:  "avatars/testavatar/download.jpeg",
+		Sizes: sizes,
+		Ready: false,
+	}
+	js, err := json.Marshal(thub)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(js))
+	ctx := context.Background()
+	fstore.Collection("service").Doc("service").Collection("thubnail").Add(ctx, thub)
+*/

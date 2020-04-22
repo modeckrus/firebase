@@ -59,7 +59,7 @@ var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
 
 func init() {
 	if projectID == "" {
-		projectID = "gvisionmodeck"
+		projectID = "modeckchat"
 	}
 	ctx := context.Background()
 	conf := &firebase.Config{
