@@ -55,6 +55,9 @@ type PostE struct {
 	Title struct {
 		StringValue string `json:"stringValue"`
 	} `json:"Title"`
+	Subtitle struct {
+		StringValue string `json:"stringValue"`
+	} `json:"Subtitle"`
 }
 
 // GOOGLE_CLOUD_PROJECT is automatically set by the Cloud Functions runtime.
@@ -114,8 +117,10 @@ func PostCreated(ctx context.Context, e FirestoreEvent) error {
 	postE := postedition.PostEdition{
 		Body:      e.Value.Fields.Body.StringValue,
 		Title:     e.Value.Fields.Title.StringValue,
+		Subtitle:  e.Value.Fields.Subtitle.StringValue,
 		Hasattach: e.Value.Fields.Hasattach.BooleanValue,
-		Images:    images,
+
+		Images: images,
 	}
 	log.Println(postE)
 	postPub := CretePostPubfromPostEdition(postE, *user)
@@ -168,6 +173,7 @@ func CretePostPubfromPostEdition(postE postedition.PostEdition, user usermodel.U
 	}
 	postPub = &postedition.PostPub{
 		Title:     postE.Title,
+		Subtitle:  postE.Subtitle,
 		Body:      postE.Body,
 		Nick:      nick,
 		Avatar:    avatar,
