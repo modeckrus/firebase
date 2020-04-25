@@ -130,6 +130,7 @@ func PostCreated(ctx context.Context, e FirestoreEvent) error {
 		log.Println(err)
 		return err
 	}
+	fstore.Collection("feedline").Doc(uid).Collection("post").Doc(pathParts[3]).Set(ctx, postPub)
 	subsciter := fstore.Collection("user").Doc(user.UID).Collection("subscribers").Documents(ctx)
 	for {
 		subDoc, err := subsciter.Next()
